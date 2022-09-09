@@ -1,4 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import CardMUI from "./Mui/CardMUI";
+import ButtonCard from "./Mui/CardMUI";
+import ButtonUi from "./Mui/Button";
+import InputUi from "./Mui/Input";
 
 const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
     let intervalFunc;
@@ -11,7 +15,10 @@ const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
         clearInterval(intervalFunc);
         setDisplay(false);
         setTimerValue(60)
-    };
+        setAnswerBool(false);
+        setAnswerValue(-question.value)
+
+    }
 
     const timer = () => {
         intervalFunc = setInterval(() => {
@@ -39,37 +46,40 @@ const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
         if (userAnswer === question.answer) {
             setAnswerBool(true);
             setAnswerValue(question.value)
+            setUserAnswer('')
         } else {
             setAnswerBool(false);
             setAnswerValue(-question.value)
+            setUserAnswer('')
         }
     };
 
     return (
         <>
-            <button onClick={() => {
+            <ButtonCard onClick={() => {
                 setDisplay(true)
                 timer()
             }}>
                 {
                     question.value
                 }
-            </button>
-            <div style={{display: display ? 'block' : 'none'}}>
-                <div>
-                    <div>
-                        <p>{question.category && question.category.title}</p>
-                        <span>{question.value}</span>
-                        <p>{question.question}</p>
-                        <ul>
+            </ButtonCard>
+            {/*onClick={(e) => e.target.className.includes('active') ? setDisplay(false) : ''}*/}
+            <div  className={`display ${display ? 'display_active' : ''}`} style={{display: display ? 'block' : 'none'}}>
+                <div className='popup'>
+                    <div className='popup__content'>
+                        <p className='popup__category'>{question.category && question.category.title}</p>
+                        <span className='popup__value'>Value : {question.value}</span>
+                        <p className='popup__question'>question :   {question.question}</p>
+                        <ul className='popup__list'>
                             {randomAnswers && randomAnswers.map((randomA, idx) => (
-                                <li key={randomA + idx}>{randomA}</li>
+                                <li className='popup__item' key={randomA + idx}>{randomA}</li>
                             ))}
                         </ul>
-                        <input onChange={(e) => setUserAnswer(e.target.value)} type="text" placeholder="Ответ"/>
-                        <div>
-                            <p>Осалось {timerValue} секунд</p>
-                            <button onClick={sendAnswer}>Ответить</button>
+                        <InputUi label="Ваш ответ*"  className='login__input' value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)} type="text" placeholder="Ответ"/>
+                        <div className='popup__under'>
+                            <p className='popup__timer'>Осалось {timerValue} секунд</p>
+                            <ButtonUi onClick={sendAnswer}>Ответить</ButtonUi>
                         </div>
                     </div>
                 </div>
