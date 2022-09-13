@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const modal = createSlice({
     name: 'modal',
     initialState: {
-        userName: '',
+        userName:  "" ,
         totalValue: '',
         allPlayers: []
     },

@@ -1,35 +1,42 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import CardMUI from "./Mui/CardMUI";
 import ButtonCard from "./Mui/CardMUI";
 import ButtonUi from "./Mui/Button";
 import InputUi from "./Mui/Input";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {getMyStatistics} from "../redux/myStat";
+import {useDispatch} from "react-redux";
+import {getTrue, getFalse} from "../redux/myStat";
 
-const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
+const Card = ({ question, answers, setAnswerBool, setAnswerValue, answerBool, answerValue}) => {
     let intervalFunc;
+    const dispatch = useDispatch()
     const [userAnswer, setUserAnswer] = useState('');
     const [display, setDisplay] = useState(false);
+    const [disable, setDisable] = useState(false)
+    const [correct, setCorrect] = useState('transParent')
     const [timerValue, setTimerValue] = useState(60);
     const [randomAnswers, setRandomAnswers] = useState([]);
+
 
     const timerFunc = (intervalFunc) => {
         clearInterval(intervalFunc);
         setDisplay(false);
         setTimerValue(60)
-        setAnswerBool(false);
-        setAnswerValue(-question.value)
-
-    }
+    };
 
     const timer = () => {
         intervalFunc = setInterval(() => {
             if (timerValue > 0) {
-                setTimerValue((prev) => prev - 1)
+                setTimerValue((prev) => prev - 1);
             }
-        }, 1000)
+        }, 1000);
+
         setTimeout(() => {
             timerFunc(intervalFunc)
-        }, 60000)
-    }
+        }, 60000);
+    };
 
     useEffect(() => {
         const arr = []
@@ -41,24 +48,31 @@ const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
         setRandomAnswers(arr)
     }, [])
 
-    const sendAnswer = () => {
+    const sendAnswer = (e) => {
+        e.preventDefault()
         timerFunc(intervalFunc);
         if (userAnswer === question.answer) {
+            setCorrect('green')
             setAnswerBool(true);
             setAnswerValue(question.value)
             setUserAnswer('')
+            dispatch(getTrue(1))
+
         } else {
-            setAnswerBool(false);
+            setCorrect('red')
+            setAnswerBool(false)
             setAnswerValue(-question.value)
             setUserAnswer('')
+            dispatch(getFalse(1))
         }
     };
 
     return (
         <>
-            <ButtonCard onClick={() => {
+            <ButtonCard style={{border: `2px solid ${correct}`, width: '150px', height: '100px', marginBottom: '10px'}} disabled={disable} onClick={() => {
                 setDisplay(true)
                 timer()
+                setDisable(true)
             }}>
                 {
                     question.value
@@ -67,7 +81,7 @@ const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
             {/*onClick={(e) => e.target.className.includes('active') ? setDisplay(false) : ''}*/}
             <div  className={`display ${display ? 'display_active' : ''}`} style={{display: display ? 'block' : 'none'}}>
                 <div className='popup'>
-                    <div className='popup__content'>
+                    <form onSubmitCapture={sendAnswer} className='popup__content'>
                         <p className='popup__category'>{question.category && question.category.title}</p>
                         <span className='popup__value'>Value : {question.value}</span>
                         <p className='popup__question'>question :   {question.question}</p>
@@ -79,9 +93,9 @@ const Card = ({ question, answers, setAnswerBool, setAnswerValue}) => {
                         <InputUi label="Ваш ответ*"  className='login__input' value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)} type="text" placeholder="Ответ"/>
                         <div className='popup__under'>
                             <p className='popup__timer'>Осалось {timerValue} секунд</p>
-                            <ButtonUi onClick={sendAnswer}>Ответить</ButtonUi>
+                            <ButtonUi type='submit' >Ответить</ButtonUi>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </>

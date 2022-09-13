@@ -11,7 +11,7 @@ const Login = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {userName} = useSelector(state => state.modal)
-    const x = new RegExp('[а-яА-ЯЁё\]')    ///[a-zA-Z][a-zA-Z0-9-_\.]/g
+    const x = new RegExp(/^[a-zA-Zа-яА-Я0-9_]{2,}$/)    ///[a-zA-Z][a-zA-Z0-9-_\.]/g
     const [name, setName] = useState('')
     let postalResult = x.test(name)
 
@@ -27,7 +27,7 @@ const Login = () => {
 
     return (
         <div className="login">
-            <form className="login__form" onSubmit={saveNameHandler}>
+            <form className="login__form" onSubmitCapture={saveNameHandler}>
                 <InputUi minLength={2}
                          required
                          value={name}
@@ -37,7 +37,7 @@ const Login = () => {
                          name={name}
                          label="Ведите ваше имя"
                 />
-                <span className="login__info">Пока только Русское имя</span>
+                <span className="login__info">Имя может состоять из Кирилицы, Латиницы и цифр</span>
                 <ButtonUi type='submit' children={'Войти'}/>
             </form>
         </div>

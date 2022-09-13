@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import {saveTotalValue, saveUserName} from "../../redux/modal";
+import {getAllPlayers, saveTotalValue, saveUserName} from "../../redux/modal";
 import ButtonUi from "./Button";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -45,17 +45,29 @@ const TableUi = () => {
     const {userName} = modal
 
 
+
+
     useEffect(() => {
         if (!userName) {
             navigate('/')
         }
     }, [userName])
-    const playAgainHandler = () => {
+
+
+    const exitHandler = () => {
         navigate('/')
-        dispatch(saveUserName(''))
+        localStorage.removeItem('user')
         dispatch(saveTotalValue(''))
     }
+    const playAgainHandler = () => {
+        navigate('/game')
+    }
 
+
+    // const endGameHandler = () => {
+    //     dispatch(getAllPlayers({name: userName, answerTotal: answerTotal}))
+    //     navigate('/statistics');
+    // };
     return (
         <>
             <TableContainer component={Paper}>
@@ -69,7 +81,7 @@ const TableUi = () => {
                     </TableHead>
                     <TableBody>
                         {
-                            allPlayers && allPlayers.map((row, index) => (
+                            allPlayers && allPlayers.map((row, index) =>  (
                                 <StyledTableRow key={row.name}>
                                     <StyledTableCell component="th" scope="row" align='center'>
                                         {index + 1}
@@ -82,7 +94,10 @@ const TableUi = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ButtonUi style={{margin: '20px auto', display: 'flex'}} onClick={playAgainHandler} children={'Play Again'}/>
+            <div style={{justifyContent: 'center', display: 'flex', columnGap: '20px', marginTop: '20px'}}>
+                {/*<ButtonUi  onClick={playAgainHandler} children={'Продолжить игру'}/>*/}
+                <ButtonUi style={{background: 'red'}}  onClick={exitHandler} children={'Выйти'}/>
+            </div>
         </>
     );
 }

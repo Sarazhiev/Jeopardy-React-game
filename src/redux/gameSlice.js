@@ -6,10 +6,11 @@ const sidebarSlice = createSlice({
     name: 'gameState',
     initialState: {
         categories: [],
+
     },
     reducers: {
         setCategories: (state, action) => {
-            state.categories = action.payload;
+            state.categories = action.payload
         }
     },
 });

@@ -6,7 +6,7 @@ const ButtonCard = ({children, ...props}) => {
 
     return (
         <Stack >
-            <Button style={{width: '150px', height: '100px', marginBottom: '10px'}} {...props} variant="contained" color="success">
+            <Button  {...props} variant="contained" color="success">
                 {children}
             </Button>
         </Stack>
